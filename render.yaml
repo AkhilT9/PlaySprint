@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: facepay
+    runtime: node
+    plan: free
+    buildCommand: npm install --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/merchants
+    envVars:
+      - key: NODE_VERSION
+        value: 22.12.0
+      - key: FACEPAY_SECRET
+        generateValue: true
