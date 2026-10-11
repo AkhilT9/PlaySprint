@@ -1,0 +1,29 @@
+{
+  "name": "facepay",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "FacePay - pay with your face instead of a UPI PIN (hackathon prototype)",
+  "scripts": {
+    "postinstall": "node scripts/copy-models.mjs",
+    "dev": "concurrently -k -n api,web -c blue,magenta \"node --watch server/index.js\" \"vite\"",
+    "dev:phone": "concurrently -k -n api,web -c blue,magenta \"node --watch server/index.js\" \"vite --mode phone\"",
+    "build": "vite build",
+    "start": "node server/index.js",
+    "reset": "node server/reset.js"
+  },
+  "dependencies": {
+    "@vladmandic/face-api": "^1.7.15",
+    "express": "^4.22.3",
+    "jsqr": "^1.4.0",
+    "qrcode": "^1.5.4",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-basic-ssl": "^2.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "concurrently": "^10.0.6",
+    "vite": "^8.3.4"
+  }
+}
