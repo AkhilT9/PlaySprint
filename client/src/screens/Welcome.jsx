@@ -22,7 +22,7 @@ export default function Welcome() {
       </div>
 
       <ul className="features">
-        <li><span>⚡</span><div><b>Pay in seconds</b><small>Look, smile, paid. No more typing a PIN where people can see it.</small></div></li>
+        <li><span>⚡</span><div><b>Pay in seconds</b><small>Look, turn, paid. No more typing a PIN where people can see it.</small></div></li>
         <li><span>🛡️</span><div><b>Anti-spoof liveness</b><small>Random challenges block photos and videos.</small></div></li>
         <li><span>🔒</span><div><b>Privacy first</b><small>Your photo never leaves the phone, only a face signature.</small></div></li>
       </ul>

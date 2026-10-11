@@ -35,7 +35,7 @@ export default function Enroll() {
             <span>🧑</span>
           </div>
           <h2 className="center">{reenroll ? 'Re-scan your face' : 'Set up FacePay'}</h2>
-          <p className="muted center">Takes about 5 seconds. We'll ask you to do one small action to prove you're real.</p>
+          <p className="muted center">Takes about 5 seconds. You'll turn your head slightly once to prove you're real.</p>
           <ul className="tips">
             <li>💡 Find good, even lighting</li>
             <li>👓 Remove sunglasses and masks</li>
@@ -50,7 +50,6 @@ export default function Enroll() {
         <FaceScanner
           key={attempt}
           mode="enroll"
-          challenge="smile"
           title="Scanning your face"
           onComplete={save}
           onCancel={() => setStep('intro')}

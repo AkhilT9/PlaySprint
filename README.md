@@ -1,7 +1,7 @@
 # FacePay: pay with a glance, not a PIN
 
 FacePay replaces the UPI PIN with **on-device face verification and a liveness check**.
-Look at your phone, do one random action (smile or turn your head), and you've paid.
+Look at your phone, turn your head slightly (left or right, picked at random), and you've paid.
 
 > Hackathon prototype. It uses a demo wallet (₹10,000 for each new user), with no real money and no real bank or NPCI connection.
 
@@ -11,7 +11,7 @@ Look at your phone, do one random action (smile or turn your head), and you've p
 |---|---|
 | 🙂 **Pay with Face** | Face-only payments up to ₹2,000. No PIN. |
 | 🔐 **Step-up security** | Above ₹2,000, you need your face **and** the backup PIN. |
-| 🛡️ **Anti-spoof liveness** | The server picks a random challenge (smile, turn left, turn right). A printed photo can't pass. |
+| 🛡️ **Anti-spoof liveness** | The server picks a random head-turn direction for each payment. A printed photo can't pass. |
 | 🔁 **Face-swap detection** | Face samples from before and after the challenge must belong to the same person. |
 | 🔢 **PIN fallback** | 3 failed face matches: the app falls back to the PIN. 5 wrong PINs lock the account for 5 minutes. |
 | 👥 **One face, one account** | The same face can't be enrolled on two accounts. |
@@ -54,7 +54,7 @@ npm run reset   # then restart the server
 ## Demo script (about 3 minutes)
 
 1. **The problem:** "Every UPI payment means typing a 4–6 digit PIN, often in public where people can watch."
-2. **Sign up** on a phone: name, number, backup PIN, then the face scan (it asks for a smile).
+2. **Sign up** on a phone: name, number, backup PIN, then the face scan (a small head turn).
 3. **Pay ₹250 to Rahul.** Tap Pay, look, do the challenge, paid. Point out the receipt: *Verified by Face · 99% match*.
 4. **Pay ₹3,000.** Face, then PIN, to show the step-up security.
 5. **Spoof attempt:** hold up a printed photo. It never passes liveness. Then have a teammate try: "Face didn't match", and after 3 tries it falls back to the PIN.
@@ -68,7 +68,7 @@ Demo contacts: `rahul@facepay`, `priya@facepay`, `aman@facepay`, `campuscafe@fac
  Phone (browser)                                   FacePay server
  ───────────────                                   ──────────────
  camera → TinyFaceDetector → 68 landmarks
-        → liveness (smile / head-turn state machine)
+        → liveness (head turn vs. your own straight pose)
         → 128-d FaceNet embedding ×3  ──────────►  /pay/intent issues a random challenge
                                                    /pay/confirm checks:
                                                      ✓ challenge matches the intent

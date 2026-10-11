@@ -50,11 +50,13 @@ export default function FaceScanner({ mode = 'verify', challenge, onComplete, on
 
     async function loop() {
       const needBefore = mode === 'enroll' ? 3 : 1;
-      const needAfter = 2;
+      const needAfter = mode === 'enroll' ? 2 : 1;
       let step = 'position';
       let stable = 0;
       let lastSeen = performance.now();
       let lastCapture = 0;
+      let yaws = [];
+      let baseYaw = 0.5;
       let liveness = createLiveness(challengeType);
       let challengeStart = 0;
       let before = [];
@@ -68,8 +70,8 @@ export default function FaceScanner({ mode = 'verify', challenge, onComplete, on
       const reset = (msg) => {
         before = [];
         after = [];
+        yaws = [];
         stable = 0;
-        liveness = createLiveness(challengeType);
         setProgress(0);
         go('position', msg);
       };
@@ -78,11 +80,11 @@ export default function FaceScanner({ mode = 'verify', challenge, onComplete, on
       while (!stopped) {
         await sleepFrame();
         const now = performance.now();
-        const wantDescriptor =
-          (step === 'capture' && now - lastCapture > 180) || (step === 'return' && now - lastCapture > 150);
+        const descriptor =
+          (step === 'capture' && now - lastCapture > 120) || (step === 'return' && now - lastCapture > 120);
         let f;
         try {
-          f = await analyze(video, wantDescriptor);
+          f = await analyze(video, { descriptor, expressions: step === 'challenge' && liveness.needsExpressions });
         } catch {
           continue;
         }
@@ -95,21 +97,25 @@ export default function FaceScanner({ mode = 'verify', challenge, onComplete, on
           continue;
         }
         lastSeen = now;
-        const straight = Math.abs(f.yaw - 0.5) < 0.12;
+        // "Straight" is loose here; liveness is measured relative to the user's own pose.
+        const facingCamera = Math.abs(f.yaw - 0.5) < 0.14;
 
         if (step === 'position') {
           if (!f.bigEnough) setMessage('Move a little closer');
           else if (f.tooClose) setMessage('Move back a little');
           else if (!f.centered) setMessage('Center your face in the circle');
-          else if (!straight) setMessage('Look straight at the camera');
-          else if (++stable >= 3) go('capture', 'Hold still…');
-          setProgress(Math.min(0.15, stable * 0.05));
+          else if (!facingCamera) setMessage('Look straight at the camera');
+          else if (++stable >= 2) go('capture', 'Hold still…');
+          setProgress(Math.min(0.15, stable * 0.07));
         } else if (step === 'capture') {
-          if (f.descriptor && straight && f.centered) {
+          if (f.descriptor && facingCamera) {
+            yaws.push(f.yaw);
             before.push(f.descriptor);
             lastCapture = now;
             setProgress(0.15 + (before.length / needBefore) * 0.2);
             if (before.length >= needBefore) {
+              baseYaw = [...yaws].sort((a, b) => a - b)[Math.floor(yaws.length / 2)]; // median
+              liveness = createLiveness(challengeType, baseYaw);
               challengeStart = now;
               go('challenge', CHALLENGE_INFO[challengeType].text);
             }
@@ -118,14 +124,14 @@ export default function FaceScanner({ mode = 'verify', challenge, onComplete, on
           const p = liveness.update(f);
           setProgress(0.35 + p * 0.5);
           if (liveness.passed) {
-            go('return', 'Great! Now look straight at the camera');
-          } else if (now - challengeStart > 12000) {
-            liveness = createLiveness(challengeType);
+            go('return', 'Now look back at the camera');
+          } else if (now - challengeStart > 8000) {
+            liveness = createLiveness(challengeType, baseYaw);
             challengeStart = now;
-            setMessage(`Didn't catch that. ${CHALLENGE_INFO[challengeType].text}`);
+            setMessage(`A bit more! ${CHALLENGE_INFO[challengeType].text}`);
           }
         } else if (step === 'return') {
-          if (f.descriptor && straight && f.happy < 0.9) {
+          if (f.descriptor && Math.abs(f.yaw - baseYaw) < 0.07) {
             after.push(f.descriptor);
             lastCapture = now;
             setProgress(0.85 + (after.length / needAfter) * 0.15);

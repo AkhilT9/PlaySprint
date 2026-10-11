@@ -27,7 +27,7 @@ const TERMINAL_LIMIT = 2_000_00; // merchant face-terminal cap
 const UPI_TXN_LIMIT = 1_00_000_00; // ₹1 lakh
 const MAX_FACE_ATTEMPTS = 3;
 const MAX_PIN_ATTEMPTS = 5;
-const CHALLENGES = ['blink', 'smile', 'turnLeft', 'turnRight'];
+const CHALLENGES = ['turnLeft', 'turnRight']; // quick head turns - no smiling on demand
 
 const app = express();
 app.use(express.json({ limit: '200kb' }));
