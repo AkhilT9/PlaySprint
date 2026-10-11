@@ -24,10 +24,17 @@ export class ApiError extends Error {
   }
 }
 
+export const STANDALONE = import.meta.env.VITE_STANDALONE === '1';
+
 export async function api(path, body, method) {
   const token = getToken();
   let res;
-  try {
+  if (STANDALONE) {
+    // GitHub Pages build: no server, the API runs in the browser.
+    const { localApi } = await import('./localApi.js');
+    const r = await localApi(path, body, method || (body ? 'POST' : 'GET'));
+    res = { ok: r.ok, status: r.status, json: async () => r.data };
+  } else try {
     res = await fetch(`/api${path}`, {
       method: method || (body ? 'POST' : 'GET'),
       headers: {

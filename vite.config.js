@@ -6,6 +6,7 @@ import basicSsl from '@vitejs/plugin-basic-ssl';
 // `npm run dev:phone` -> https://<your-LAN-IP>:5173 so phones on the same Wi-Fi can use the camera
 export default defineConfig(({ mode }) => ({
   root: 'client',
+  base: process.env.VITE_BASE || '/',
   plugins: [react(), ...(mode === 'phone' ? [basicSsl()] : [])],
   server: {
     host: mode === 'phone' ? true : 'localhost',

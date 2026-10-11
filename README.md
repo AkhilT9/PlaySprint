@@ -20,7 +20,15 @@ Look at your phone, turn your head slightly (left or right, picked at random), a
 | 🏪 **Merchant face terminal** | Like "Smile to Pay": the customer carries nothing. The terminal finds them among all users (1:N) and they confirm with the last 4 digits of their phone. |
 | 🔒 **Privacy** | Face AI runs in the browser. Only a 128-number face signature is sent, never a photo. |
 
-## Deploy (free, 3 minutes)
+## Live demo (GitHub Pages)
+
+**https://akhilt9.github.io/PlaySprint/**
+
+Every push to `main` rebuilds the site with GitHub Actions (`.github/workflows/deploy.yml`).
+The Pages build runs in *standalone mode*: the API runs inside the browser and data is stored in
+that browser only (open the merchant terminal in another tab of the same browser).
+
+## Deploy with a real server (Render, free)
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/AkhilT9/PlaySprint)
 

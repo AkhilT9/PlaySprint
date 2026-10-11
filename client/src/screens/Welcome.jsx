@@ -1,5 +1,6 @@
 import { Logo } from '../App.jsx';
 import { navigate } from '../lib/router.js';
+import { STANDALONE } from '../lib/api.js';
 
 export default function Welcome() {
   return (
@@ -31,6 +32,7 @@ export default function Welcome() {
         <button className="btn primary lg" onClick={() => navigate('/register')}>Get started</button>
         <button className="btn lg" onClick={() => navigate('/login')}>I already have an account</button>
         <button className="link" onClick={() => navigate('/terminal')}>🏪 Open merchant face terminal</button>
+        {STANDALONE && <p className="tiny muted center">Demo mode: accounts and money are stored only in this browser.</p>}
       </div>
     </div>
   );
